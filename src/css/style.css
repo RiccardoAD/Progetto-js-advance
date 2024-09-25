@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;300;400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap");
 :root {
-  --pale-pink: rgb(249, 247, 247);
+  --pale-tone: rgb(233, 224, 214);
   --dark-tone: rgb(197, 179, 159);
   --gunmetal: rgba(48, 52, 63, 1);
   --eerie-black: rgba(27, 32, 33, 1);
@@ -40,7 +40,7 @@ h1 span {
 }
 
 h1 span svg {
-  fill: var(--pale-pink);
+  fill: var(--pale-tone);
   margin: 0 1rem;
 }
 
@@ -150,7 +150,7 @@ ul {
 .list-item button {
   cursor: pointer;
   font-family: inherit;
-  background-color: var(--pale-pink);
+  background-color: var(--pale-tone);
   border: none;
   padding: 0.5rem;
   margin-top: 1rem;
@@ -191,7 +191,7 @@ ul {
   width: 1rem;
   height: 1rem;
   border-radius: 50%;
-  background: var(--pale-pink);
+  background: var(--pale-tone);
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .loader div:nth-child(1) {

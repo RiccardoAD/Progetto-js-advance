@@ -6,7 +6,7 @@ module.exports = {
     mode: "production",
     entry: "./src/js/index.js",
     output: {
-      filename: "main.[contenthash].js",
+      filename: "main.[hash].js",
       path: path.resolve(__dirname, "dist"),
       clean: true,
     },
@@ -23,5 +23,5 @@ module.exports = {
         template: "./src/index.html",
       }),
     ],
-    devtool: 'source-map', 
+    
   };

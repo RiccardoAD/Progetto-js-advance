@@ -7,10 +7,31 @@ import styles from "../css/style.css";
 const input = document.querySelector("#site-search");
 let errorP = document.createElement('p');
 const loader=document.querySelector('.loader');
+const list = document.querySelector(".list");
+const searchBtn = document.querySelector(".search-btn");
+
 errorP.classList.add('error-paragraph');
 
 
 input.value="";
+
+
+// Function for showing and hiding  loader
+const toggleLoader = (show) => {
+  if (show) {
+    loader.classList.remove("hidden");
+  } else {
+    loader.classList.add("hidden");
+  }
+};
+// Function creste elements in  HTML whith classi
+const createElement = (type, classNames, text = "") => {
+  const element = document.createElement(type);
+  element.classList.add(...classNames);
+  if (text) element.innerText = text;
+  return element;
+};
+
 
 // api call
 
@@ -25,8 +46,8 @@ const getData = async () =>{
     return;
   };
 
-  //start the loader animation
-  loader.classList.toggle("hidden");
+
+  toggleLoader(true); // show the loader 
 
   try {
     // send a get request to open library
@@ -34,94 +55,80 @@ const getData = async () =>{
       `https://openlibrary.org/subjects/${inputValue}.json`
     );
 
-    if (res.data.work_count !== 0) {        
-      loader.classList.toggle("hidden");    
+    toggleLoader(false); // hide the loader
+
+    
+    if (res.data.work_count !== 0) {
       const works = res.data.works;
-      for (let work of works) {                 
-        // we create a card for every work given to us by the api call
-        createCard(work);
-      }
-    } else {                                
-      loader.classList.toggle("hidden");    
-      errorP.innerText = "No match found.";  
-      document.body.appendChild(errorP);
+      // we create a card for every work given to us by the api call
+      works.forEach(work => createCard(work));
+    } else {
+      showError("No match found.");
     }
   } catch (e) {
-    loader.classList.toggle("hidden");
-    errorP.innerText = "No match found.";
-    document.body.appendChild(errorP);
+    toggleLoader(false); 
+    showError("No match found.");
     console.log("ERROR!", e);
   }
+
   input.value = "";
+};
+
+// Fucrion for show  error
+const showError = (message) => {
+  errorP.innerText = message;
+  document.body.appendChild(errorP);
 };
 
 // make the second API call and fetch the description of the selected book
 const getDescription = async (key) => {
   try {
-    // we use the work key to fetch the description
     const res = await axios.get(`https://openlibrary.org${key}.json`);
     if (res.data && res.data.description && res.data.description.value) {
       return res.data.description.value;
     } else if (res.data && res.data.description) {
       return res.data.description;
     } else {
-      return "No description avaliable.";
+      return "No description available.";
     }
   } catch (e) {
     console.log("ERROR!", e);
   }
 };
 
-// target the list from the DOM
-const list = document.querySelector(".list");
+// Crate a card to fetch each book
+const createCard = (work) => {
+  const newLi = createElement("li", ["list-item"]);
+  const h3 = createElement("h3", ["h3"], work.title);
+  const author = createElement("span", ["author"], work.authors[0].name);
+  const readMore = createElement("button", ["read-more"], "Show More");
+  const descriptionP = createElement("p", ["description-paragraph"]);
 
-
-const createCard = async (work) => {
-  //create a new list item for every work and append it to the existing list in the DOM, then we style it by adding classes
-  let newLi = document.createElement("li");
-  list.appendChild(newLi);
-  newLi.classList.add("list-item");
-
-  // create an h3 element for every work title and append it in it's list item, then we style it by adding classes
-  let h3 = document.createElement("h3");
-  h3.innerText = work.title;
-  h3.classList.add("h3");
   newLi.appendChild(h3);
-
-  // create a span for every author name and append it in it's list item, then we style it by adding classes
-  let author = document.createElement("span");
-  author.innerText = work.authors[0].name;
-  author.classList.add("author");
   newLi.appendChild(author);
-
-  // create a "read more" button for every card and append it in it's list item, then we style it by adding classes
-  const readMore = document.createElement("button");
-  readMore.innerText = "Show More";
-  readMore.classList.add("read-more");
   newLi.appendChild(readMore);
+  list.appendChild(newLi);
 
-  // create a paragraph for every description, then we control it's content by manipulating the behavior of the "read more" button
-  const descriptionP = document.createElement("p");
-  descriptionP.classList.add("description-paragraph");
+  let descriptionLoaded = false; // Flag per sapere se la descrizione è stata caricata
 
   readMore.addEventListener("click", async () => {
-    if (readMore.innerText === "Show More") { 
-           let description = await getDescription(work.key);
-      descriptionP.innerText = description;  
-           newLi.appendChild(descriptionP);       
-      
-      readMore.innerText = "Show Less";     
-       
+    if (readMore.innerText === "Show More") {
+      if (!descriptionLoaded) { // if the description is not loaded
+        let description = await getDescription(work.key);
+        descriptionP.innerText = description;
+        newLi.appendChild(descriptionP);
+        descriptionLoaded = true; 
+      }
+      descriptionP.style.display = "block"; 
+      readMore.innerText = "Show Less";
     } else {
-      descriptionP.remove();                
-      xt
+      descriptionP.style.display = "none"; 
       readMore.innerText = "Show More";
     }
   });
 };
 
-// target the search button from the DOM
-const searchBtn = document.querySelector(".search-btn");
+
 
 // manipulate search button behavior
 searchBtn.addEventListener("click", (event) => {

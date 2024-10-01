@@ -6,7 +6,7 @@
 
 ## Link
 
-[Versione live del progetto - Netlify](https://66f47ade0373613623cbaf8d--strong-raindrop-a67b74.netlify.app/)
+[Versione live del progetto - Netlify](https://66fbc1f63d14a7fa20345aa7--peaceful-daffodil-747546.netlify.app//)
 
 ###
 
